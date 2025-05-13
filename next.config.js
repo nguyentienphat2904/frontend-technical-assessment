@@ -10,6 +10,15 @@ const nextConfig = {
         });
         return config;
     },
+    async redirects() {
+        return [
+            {
+                source: '/',
+                destination: '/albums',
+                permanent: false,
+            },
+        ];
+    },
 };
 
 module.exports = nextConfig
