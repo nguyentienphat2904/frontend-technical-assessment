@@ -88,7 +88,7 @@ export default function AlbumsPage() {
                     <Column sortable field="id" header="ID"></Column>
                     <Column sortable field="title" header="Title"></Column>
                     <Column sortable header="User" body={(rowData) => (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
                             <div>
                                 <img
                                     src={`https://ui-avatars.com/api/?name=${rowData.username}&background=random&rounded=true`}
