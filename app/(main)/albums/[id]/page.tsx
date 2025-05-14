@@ -1,31 +1,26 @@
 "use client"
 
-import { UserOperation } from '@/app/api/user';
-import { User, UserAlbums } from '@/types/user';
-import { url } from 'inspector';
-import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import { AlbumOperation } from '@/app/api/album';
+import { Album, AlbumPhoto } from '@/types/album';
+import { useParams, useRouter } from 'next/navigation'
 import { BreadCrumb } from 'primereact/breadcrumb';
-import { Button } from 'primereact/button';
-import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Divider } from 'primereact/divider';
 import { Skeleton } from 'primereact/skeleton';
 import { Toast } from 'primereact/toast';
+import { Image } from 'primereact/image';
 import React, { useEffect, useRef, useState } from 'react'
+import { Button } from 'primereact/button';
+import Head from 'next/head';
 
-export default function DetailUser() {
+export default function DetailAlbum() {
 
     const router = useRouter();
 
     const toast = useRef<Toast>(null)
 
-    const [user, setUser] = useState<User | null>(null);
-    const [userAlbums, setUserAlbums] = useState<UserAlbums[]>([]);
-    const itemsAlbums = Array.from({ length: 5 }, (v, i) => ({
-        id: '',
-        title: '',
-    }));
+    const [album, setAlbum] = useState<Album | null>(null);
+    const [photos, setPhotos] = useState<AlbumPhoto[]>([]);
 
     const { id } = useParams();
 
@@ -33,17 +28,17 @@ export default function DetailUser() {
         { label: 'Show' },
     ];
     const home = {
-        icon: 'pi pi-id-card', label: 'Users', url: '/users'
+        icon: 'pi pi-list', label: 'Albums', url: '/albums?pageSize=20&current=1'
     };
 
     useEffect(() => {
-        async function getUserAndUserAlbum(id: string) {
-            const userOp = new UserOperation();
+        async function getAlbumAndPhotos(id: string) {
             try {
-                const resUser = await userOp.getUserByID(id)
-                setUser(resUser.data || null)
-                const resAlbums = await userOp.getUserAlbums(id)
-                setUserAlbums(resAlbums.data || [])
+                const albumOp = new AlbumOperation()
+                const resAlbum = await albumOp.getAlbumById(id)
+                const resPhotos = await albumOp.getAlbumPhotos(id)
+                setAlbum(resAlbum.data || null);
+                setPhotos(resPhotos.data || [])
             } catch (error: any) {
                 const mes = error.message;
                 toast.current?.show({
@@ -55,15 +50,8 @@ export default function DetailUser() {
             }
         }
 
-        getUserAndUserAlbum(id)
+        getAlbumAndPhotos(id)
     }, []);
-
-    const renderAction = (rowData: User) => {
-        return (
-            <Button label="Show" icon="pi pi-eye" size="small" severity="secondary" outlined
-                onClick={() => router.push(`/albums/${rowData.id}`)} />
-        )
-    }
 
     const goBack = () => {
         router.back()
@@ -71,6 +59,10 @@ export default function DetailUser() {
 
     return (
         <div>
+            <Head>
+                <title>#{id} Album Show | Refine</title>
+                <meta name="description" content="This is the albums page of Refine." />
+            </Head>
             <div>
                 <BreadCrumb model={items} home={home} className='border-none text-lg' style={{ backgroundColor: 'var(--surface-ground)' }} />
             </div>
@@ -82,24 +74,29 @@ export default function DetailUser() {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }} className='text-xl font-semibold'>
-                    Show Users
+                    Show Album
                 </div>
             </div>
             <div className='card'>
                 <div className='card'>
-                    {user ? (
+                    {album ? (
                         <div className="flex items-start gap-4">
                             <img
-                                src={`https://ui-avatars.com/api/?name=${user?.name}&background=random&rounded=true`}
-                                alt={user?.name}
+                                src={`https://ui-avatars.com/api/?name=${album?.username}&background=random&rounded=true`}
+                                alt={album?.username}
                             />
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <div className="text-base font-semibold text-gray-800">{user?.name}</div>
+                                <div className="text-base font-semibold text-gray-800">
+                                    <a href={`/users/${album.userId}`}
+                                        className="text-blue-600 block">
+                                        {album?.username}
+                                    </a>
+                                </div>
                                 <a
-                                    href={`mailto:${user?.email}`}
+                                    href={`mailto:${album?.email}`}
                                     className="text-blue-600 block"
                                 >
-                                    {user?.email}
+                                    {album?.email}
                                 </a>
                             </div>
                         </div>
@@ -119,30 +116,36 @@ export default function DetailUser() {
                         </div>
                     )}
 
-
                     <Divider />
 
-                    <div className='text-2xl font-bold my-4'>
-                        Albums
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                            gap: '16px',
+                        }}
+                    >
+                        {photos.length > 0 ? (
+                            photos.slice(0, 10).map((photo) => (
+                                <Image
+                                    key={photo.id}
+                                    src={photo.thumbnailUrl}
+                                    alt={photo.title}
+                                    preview
+                                />
+                            ))
+                        ) : (
+                            Array(6)
+                                .fill(null)
+                                .map((_, index) => (
+                                    <Skeleton key={index} width="100%" height="150px" />
+                                ))
+                        )}
                     </div>
-                    {userAlbums.length > 0 ? (
-                        <DataTable value={userAlbums} removableSort selectionMode={"single"} tableStyle={{ minWidth: '50rem' }} className='text-sm'>
-                            <Column sortable field="id" header="ID"></Column>
-                            <Column sortable field="title" header="Title"></Column>
-                            <Column body={renderAction} header="Actions" style={{ minWidth: '8rem' }}></Column>
-                        </DataTable>
-                    ) : (
-                        <DataTable value={itemsAlbums} removableSort selectionMode={"single"} tableStyle={{ minWidth: '50rem' }} className='text-sm'>
-                            <Column sortable field="id" header="ID" body={<Skeleton />}></Column>
-                            <Column sortable field="title" header="Title" body={<Skeleton />}></Column>
-                            <Column header="Actions" style={{ minWidth: '8rem' }} body={<Skeleton />}></Column>
-                        </DataTable>
-                    )}
+
 
                 </div>
             </div>
-        </div>
-
-
+        </div >
     )
 }

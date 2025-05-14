@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+span.p-image.p-component.p-image-preview-container {
+    width: 100%;
+    object-fit: cover;
+    display: inline-block;
+}
+
+span.p-image.p-component.p-image-preview-container img[alt] {
+    display: block;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+}

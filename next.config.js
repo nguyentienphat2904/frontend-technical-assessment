@@ -14,7 +14,7 @@ const nextConfig = {
         return [
             {
                 source: '/',
-                destination: '/albums',
+                destination: '/albums?pageSize=20&current=1',
                 permanent: false,
             },
         ];

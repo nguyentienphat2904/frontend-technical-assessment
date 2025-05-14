@@ -15,8 +15,10 @@ const AppMenuitem = (props: AppMenuItemProps) => {
     const { activeMenu, setActiveMenu } = useContext(MenuContext);
     const item = props.item;
     const key = props.parentKey ? props.parentKey + '-' + props.index : String(props.index);
-    const isActiveRoute = item!.to && pathname.startsWith(item!.to);
-    const active = activeMenu === key || activeMenu.startsWith(key + '-');
+    const isActiveRoute = item!.to && (
+        (pathname.startsWith('/users') && item!.to.startsWith('/users')) ||  // Kiểm tra với /users
+        (pathname.startsWith('/albums') && item!.to.startsWith('/albums')) // Kiểm tra với /albums
+    ); const active = activeMenu === key || activeMenu.startsWith(key + '-');
     const onRouteChange = (url: string) => {
         if (item!.to && item!.to === url) {
             setActiveMenu(key);

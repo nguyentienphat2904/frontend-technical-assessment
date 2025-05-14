@@ -14,7 +14,7 @@ const AppMenu = () => {
         {
             label: '',
             items: [
-                { label: 'Albums', icon: 'pi pi-fw pi-list', to: '/albums' },
+                { label: 'Albums', icon: 'pi pi-fw pi-list', to: '/albums?pageSize=20&current=1' },
                 { label: 'Users', icon: 'pi pi-fw pi-id-card', to: '/users' },
             ]
         },

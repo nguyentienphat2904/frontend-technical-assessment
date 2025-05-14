@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         ttl: 604800
     },
     icons: {
-        icon: 'https://geekup.vn/Icons/geekup-logo-general.svg'
+        icon: 'https://gi-pf.vercel.app/favicon.ico'
     }
 };
 

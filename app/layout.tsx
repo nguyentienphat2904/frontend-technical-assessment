@@ -22,7 +22,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             </head>
             <body>
                 <Provider store={store}>
-                    <PrimeReactProvider>
+                    <PrimeReactProvider >
                         <LayoutProvider>{children}</LayoutProvider>
                     </PrimeReactProvider>
                 </Provider>
