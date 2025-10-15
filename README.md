@@ -71,6 +71,6 @@ bun dev
 ### 📩 Contact Information
 If you have any questions or feedback, feel free to reach out to me:
 
-Email: phat.nguyen221252729@hcmut.edu.vn
+Email: nguyentienphatgl@gmail.com
 
 I’ll be happy to help!
